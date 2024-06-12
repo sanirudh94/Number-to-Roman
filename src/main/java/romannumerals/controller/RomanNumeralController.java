@@ -6,11 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import romannumerals.output.RomanNumeralResponse;
 import romannumerals.service.RomanNumeralService;
 import romannumerals.util.RomanNumeralConverterUtil;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +47,7 @@ public class RomanNumeralController {
                 return ResponseEntity.ok(buildResponse(num, roman));
             } else if (min != null && max != null) {
                 RomanNumeralConverterUtil.validateRange(min, max);
-                List<Map<String, String>> conversions = convertRangeToRoman(min, max);
+                List<RomanNumeralResponse> conversions = convertRangeToRoman(min, max);
                 return ResponseEntity.ok(RomanNumeralConverterUtil.buildRangeResponse(conversions));
             } else {
                 throw new IllegalArgumentException("Invalid input. Please provide either a single query or both min and max parameters.");
@@ -57,10 +60,30 @@ public class RomanNumeralController {
         }
     }
 
-    private List<Map<String, String>> convertRangeToRoman(int min, int max) {
-        return IntStream.rangeClosed(min, max)
-                .parallel()
-                .mapToObj(num -> buildResponse(num, romanNumeralService.convertToRoman(num)))
-                .collect(Collectors.toList());
+    private List<RomanNumeralResponse> convertRangeToRoman(int min, int max) throws RuntimeException{
+        //Using synchronizedList to make sure that the list is thread-safe since multiple threads will be adding elements to it concurrently
+        List<RomanNumeralResponse> conversions = Collections.synchronizedList(new ArrayList<>());
+        // ExecutorService to execute conversions in parallel. Using a thread pool size of 10 allows for
+        // 10 concurrent tasks to be executed in parallel.
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = min; i <= max; i++) {
+            final int num = i;
+            Runnable task = () -> {
+                String roman = romanNumeralService.convertToRoman(num);
+                conversions.add(new RomanNumeralResponse(String.valueOf(num), roman));
+            };
+            executor.execute(task);
+        }
+        executor.shutdown();
+        try {
+            // Used to wait for the executor to terminate, which means waiting for all tasks to complete.
+            executor.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // restore interrupt status
+            // Cleanup
+            throw new RuntimeException("Interrupted while waiting for executor to terminate", e);
+        }
+        Collections.sort(conversions, Comparator.comparingInt(r -> Integer.parseInt(r.getInput())));
+        return conversions;
     }
 }
