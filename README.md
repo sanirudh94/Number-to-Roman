@@ -11,8 +11,6 @@ This project is a web service that converts integer values to Roman numerals. It
 - [Testing](#testing)
 - [Running with Docker](#running-with-docker)
 - [DevOps Capabilities](#devops-capabilities)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -163,9 +161,6 @@ You can access health and metrics endpoints to monitor the application's health 
 **Health Check**: ```http://localhost:8080/actuator/health```
 
 **Prometheus Metric**s: ```http://localhost:8080/actuator/prometheus```
-
-## Contributing
-Contributions are welcome! Please read the CONTRIBUTING.md file for details on how to contribute to this project.
 
 
 
