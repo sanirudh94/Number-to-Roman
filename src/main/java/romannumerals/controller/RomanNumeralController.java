@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,6 +27,7 @@ import static romannumerals.util.RomanNumeralConverterUtil.buildResponse;
 public class RomanNumeralController {
 
     private final RomanNumeralService romanNumeralService;
+    private static final Logger logger = Logger.getLogger(RomanNumeralController.class.getName());
 
     @Autowired
     public RomanNumeralController(RomanNumeralService romanNumeralService) {
@@ -53,8 +55,10 @@ public class RomanNumeralController {
                 throw new IllegalArgumentException("Invalid input. Please provide either a single query or both min and max parameters.");
             }
         } catch (IllegalArgumentException ex) {
+            logger.warning("Invalid input: " + ex.getMessage());
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
+            logger.severe("An unexpected error occurred: " + ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An unexpected error occurred");
         }

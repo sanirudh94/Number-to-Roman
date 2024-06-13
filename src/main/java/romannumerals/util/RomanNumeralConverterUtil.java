@@ -1,6 +1,8 @@
 package romannumerals.util;
 
-import java.util.HashMap;
+import romannumerals.output.RomanNumeralRangeResponse;
+import romannumerals.output.RomanNumeralResponse;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class RomanNumeralConverterUtil {
      * @return The parsed integer value.
      * @throws IllegalArgumentException If the input is not a valid integer or is out of range.
      */
-    public static int validateAndParseInput(String query) {
+    public static int validateAndParseInput(String query) throws IllegalArgumentException{
         if (!query.matches("\\d+")) {
             throw new IllegalArgumentException("Invalid input. Please provide an integer between 1 and 3999.");
         }
@@ -58,38 +60,29 @@ public class RomanNumeralConverterUtil {
         return num;
     }
 
-    public static void validateRange(int min, int max) {
+    public static void validateRange(int min, int max) throws IllegalArgumentException{
         if (min < 1 || max > 3999 || min >= max) {
             throw new IllegalArgumentException("Invalid range. Please provide integers between 1 and 3999 with min < max.");
         }
     }
+
     /**
-     * Builds a response entity containing the input value and its Roman numeral equivalent.
+     * Builds a RomanNumeralResponse object containing the input value and its Roman numeral equivalent.
+     *
      * @param num The input integer value.
      * @param roman The Roman numeral equivalent.
-     * @return ResponseEntity containing the input value and its Roman numeral.
+     * @return RomanNumeralResponse containing the input value and its Roman numeral.
      */
-    public static Map<String, String> buildResponse(int num, String roman) {
-        Map<String, String> response = new HashMap<>();
-        response.put("input", String.valueOf(num));
-        response.put("output", roman);
-        return response;
+    public static RomanNumeralResponse buildResponse(int num, String roman) {
+        return new RomanNumeralResponse(String.valueOf(num), roman);
     }
-
     /**
-     * Builds a response entity containing a list of conversions from integer values to their Roman numeral equivalents.
+     * Builds a RomanNumeralRangeResponse object containing a list of conversions from integer values to their Roman numeral equivalents.
+     *
      * @param conversions The list of conversions to be included in the response.
-     * @return ResponseEntity containing the list of conversions.
+     * @return RomanNumeralRangeResponse containing the list of conversions.
      */
-    public static Map<String, List<Map<String, String>>> buildRangeResponse(List<Map<String, String>> conversions) {
-        // Create a map to hold the response data
-        Map<String, List<Map<String, String>>> response = new HashMap<>();
-
-        // Add the list of conversions to the response map
-        response.put("conversions", conversions);
-
-        // Return the response map
-        return response;
+    public static RomanNumeralRangeResponse buildRangeResponse(List<RomanNumeralResponse> conversions) {
+        return new RomanNumeralRangeResponse(conversions);
     }
-
 }

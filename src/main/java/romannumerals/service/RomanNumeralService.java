@@ -14,7 +14,7 @@ public class RomanNumeralService {
      * @return The Roman numeral representation of the input value.
      * @throws IllegalArgumentException if the input value is not within the range [1, 3999].
      */
-    public String convertToRoman(int num) {
+    public String convertToRoman(int num) throws IllegalArgumentException{
         if (num < 1 || num > 3999) {
             throw new IllegalArgumentException("Input value must be between 1 and 3999.");
         }
