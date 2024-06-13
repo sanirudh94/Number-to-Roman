@@ -60,6 +60,9 @@ The application will start up, and you can access the web service at http://loca
   │   │   │       │   └── RomanNumeralController.java
   │   │   │       ├── service/
   │   │   │       │   └── RomanNumeralService.java
+  │   │   │       |── output/
+  │   │   │       │   └── RomanNumeralRangeResponse.java
+  |   |   |           └── RomanNumeralResponse.java
   │   │   │       ├── util/
   │   │   │       │   └── RomanNumeralConverter.java
   │   │   └── resources/
