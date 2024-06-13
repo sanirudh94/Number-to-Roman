@@ -31,6 +31,9 @@ This project is a web service that converts integer values to Roman numerals. It
 - Logback (for logging)
 
 ## Installation
+### Prerequisites
+1. Java Installed
+2. Maven installed
 
 To run the Number To Roman locally, follow these steps:
 
